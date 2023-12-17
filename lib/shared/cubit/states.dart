@@ -22,3 +22,7 @@ class TypeOfTaskState extends States {}
 class RadiobuttonTaskState extends States {}
 
 class WeaklyState extends States {}
+
+class ViewState extends States {}
+
+class DeleteState extends States {}

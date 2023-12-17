@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:intl/intl.dart';
 
 List<Map> task = [];
+var selectedTitle,selectedDesc,selectedYear,selectedDay,selectedMonth,selectedStatus,selectedType,selectedId;
 
 var nYear = int.parse(formatyear.format(now));
 var nMonth = int.parse(formatmonth.format(now));

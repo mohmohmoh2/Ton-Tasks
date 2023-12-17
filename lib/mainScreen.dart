@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nezam/shared/components/components.dart';
@@ -13,7 +14,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => AppCubit()..createDataBase() ,
+      create: (BuildContext context) => AppCubit() ,
       child: BlocConsumer<AppCubit, States>(
         listener: (BuildContext context, States state) {
         },
@@ -51,12 +52,31 @@ class MainScreen extends StatelessWidget {
                       timeDate(context),
                       const SizedBox(height: 30,),
                       Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) => buildTaskItem(tasks[index], context),
-                          separatorBuilder: (context, index) => const SizedBox(height: 10,),
-                          itemCount: tasks.length,
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: firestoreService.getNotesStream(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              List tasks = snapshot.data!.docs;
+                              return ListView.separated(
+                                separatorBuilder: (context, index) => const SizedBox(height: 10,),
+                                itemCount: tasks.length,
+                                itemBuilder: (context, index) {
+                                  DocumentSnapshot ds = tasks[index];
+                                  String id = ds.id;
+                                  Map<String, dynamic> task = ds.data() as Map<String, dynamic>;
+                                  return buildTaskItem(id,task, context);
+                                }
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
                         ),
+                        // child: ListView.separated(
+                        //   shrinkWrap: true,
+                        //   separatorBuilder: (context, index) => const SizedBox(height: 10,),
+                        //   itemCount: tasks.length,
+                        // ),
                       ),
                       Container(height: 90,color: mainColor)
                     ],

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:nezam/mainScreen.dart';
 import 'package:nezam/shared/components/components.dart';
 import 'package:nezam/shared/cubit/states.dart';
 import '../../generated/l10n.dart';
 import '../../shared/constants.dart';
 import '../../shared/cubit/cubit.dart';
 
+var formKey = GlobalKey<FormState>();
+
 class AddScreen extends StatelessWidget {
 
-  var formKey = GlobalKey<FormState>();
   // Form Controllers
   final titleController = TextEditingController();
   final descController = TextEditingController();
@@ -21,7 +21,7 @@ class AddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  BlocProvider(
-      create: (BuildContext context) => AppCubit()..createDataBase() ,
+      create: (BuildContext context) => AppCubit(),
       child: BlocConsumer<AppCubit, States>(
         listener: (BuildContext context, States state) {
           if(state is InsertDBState){

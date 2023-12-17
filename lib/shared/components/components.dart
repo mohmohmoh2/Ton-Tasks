@@ -71,7 +71,7 @@ Widget timeDate(context) => Row(
 );
 
 // Reusable Task Item
-Widget buildTaskItem(Map model, BuildContext context) => Container(
+Widget buildTaskItem(id,model, BuildContext context) => Container(
   decoration: BoxDecoration(
     borderRadius: BorderRadius.circular(12.0),
     color: model['status'] == 'new' ? color1 : color2,
@@ -81,17 +81,25 @@ Widget buildTaskItem(Map model, BuildContext context) => Container(
   ),
   child: Row(
     children: [
-      Expanded(child:
-      Text(
-          '${model['title']}', style: TextStyle(color: model['status'] == 'new' ? color2 : mainColor)),
+
+      Expanded(
+        child: GestureDetector(
+          onTap: (){
+            AppCubit.get(context).getViewData(context, id);
+          },
+          child:
+        Text(
+            '${model['title']}', style: TextStyle(color: model['status'] == 'new' ? color2 : mainColor)),
+        ),
       ),
         model['status'] == 'new' ? IconButton(
             onPressed: (){
-              AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: model['id']);
+
+              AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: id);
             },
             icon: Icon( Icons.circle_outlined, color: color2)) :
         IconButton(onPressed: (){
-          AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: model['id']);
+          AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: id);
         }, icon:
         Icon( Icons.check_circle, color: mainColor)
         ),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,9 +6,12 @@ import 'package:nezam/shared/constants.dart';
 import 'package:nezam/shared/cubit/states.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../generated/l10n.dart';
+import '../../layout/view_screens/view_task.dart';
 import '../../main.dart';
+import '../firestrore.dart';
 
 
+final FirestoreService firestoreService = FirestoreService();
 
 class AppCubit extends Cubit<States> {
   AppCubit() : super(AppInitial());
@@ -16,39 +20,13 @@ class AppCubit extends Cubit<States> {
   static AppCubit get(context) => BlocProvider.of(context);
   String stringLang = 'ar';
   List<Map> tasks = [];
-  var repeat;
+  var repeat,element;
   var weaklyDays=[];
 
-  // Create and open the Database
-  void createDataBase() {
-    Object database;
 
-    database =  openDatabase(
-      DATABASE_NAME,
-      version: 1,
-      onCreate: (database, version) {
-        database.execute('CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, year INTEGER, month INTEGER, day INTEGER, desc TEXT, status TEXT, tType TEXT)');
-      },
-      onOpen: (database) {
-        getDataFromDB(database);
-      },
-    ).then((value) => {
-      database = value,
-      emit(CreateDBState()),
-    });
-  }
+  Future insertToDB({required String title, required date, required String desc,})  async {
 
-  // Insert task to database
-  insertToDB({required String title, required String date, required String desc,})  async {
-    var db = await openDatabase(DATABASE_NAME,version: 1);
-    var d = date.split('-');
-    var year = d[0],month = d[1], day = d[2];
-    await db.transaction((txn)  => txn.rawInsert(
-        'INSERT INTO tasks (title, year, month, day, desc, status ,tType) VALUES ("$title", "$year", "$month", "$day", "$desc", "new", "onTime")'
-    )).then((value) => {
-    getDataFromDB(db),
-
-    });
+    firestoreService.addNote(title: title, date: date, desc: desc);
 
   }
 
@@ -63,17 +41,9 @@ class AppCubit extends Cubit<States> {
   }
 
   // Update the task states
-  onChangeButtonPressed({required String status, required int id}) async {
-    var db = await openDatabase(DATABASE_NAME,version: 1);
+  onChangeButtonPressed({required String status, required id}) async {
     String newStatus = status == 'done' ? 'new' : 'done';
-    try {
-      await db.rawUpdate(
-          'UPDATE tasks SET status = ? WHERE id = ?', [newStatus, id]);
-      getDataFromDB(db);
-      emit(ChangeButtonPressedState());
-    } catch (e) {
-      print('Failed to update status: $e');
-    }
+    firestoreService.updateStatus(newStatus: newStatus, id: id);
   }
 
   // Change Active Language Variable
@@ -231,7 +201,50 @@ var list = 1;
   }
 
 
+  getViewData(context, id) async {
+    var db = await openDatabase(DATABASE_NAME,version: 1,);
+    await db.rawQuery('SELECT * FROM tasks WHERE id = ?', ['$id']).then((value) {
+      element = value;
+      print(element[0]['id']);
+      selectedId = element[0]['id'];
+      selectedTitle = element[0]['title'];
+      selectedDesc = element[0]['desc'];
+      selectedYear = element[0]['year'];
+      selectedMonth = element[0]['month'];
+      selectedDay = element[0]['day'];
+      selectedStatus = element[0]['status'];
+      selectedType = element[0]['tType'];
+      emit(ViewState());
+     print(selectedTitle);
 
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>
+       const ViewTask()
+      ),
+    );
+  });
+  }
+
+  Future deleteTask(id) async {
+    var db = openDatabase(DATABASE_NAME,version: 1,);
+    print(id);
+    db.then((value) => {
+      value.rawDelete('DELETE FROM tasks WHERE id = ?', [id]).then((value) => {
+        getDataFromDB(value),
+        emit(DeleteState()),
+      })
+    });
+
+  }
+
+  editTask(title,description,year,month,day){
+    print(title);
+    print(description);
+    print(year);
+    print(month);
+    print(day);
+  }
 
 
 }

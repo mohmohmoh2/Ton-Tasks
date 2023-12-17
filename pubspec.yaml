@@ -33,6 +33,8 @@ flutter_launcher_icons:
     image_path: "ton.jpg"
 
 dependencies:
+  cloud_firestore: ^4.13.6
+  firebase_core: ^2.24.2
   rename_app: ^1.3.1
   flutter_launcher_icons: ^0.13.1
   google_fonts: ^6.1.0
