@@ -112,7 +112,7 @@ class EditTask extends StatelessWidget {
                                       ),
                                       Column(
                                         children: [
-                                          Text('Month'),
+                                          const Text('Month'),
                                           const SizedBox(height: 5,),
                                           SizedBox(
                                             width: 50,

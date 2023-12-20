@@ -31,5 +31,13 @@
   "oneTime": "One Time",
   "Repeatable": "Repeatable",
   "next": "Next",
-  "repeatTimes": "Repeat Times"
+  "repeatTimes": "Repeat Times",
+  "signUp": "Sign Up",
+  "dontHaveAccount": "Don't Have Account",
+  "signIn": "Sign In",
+  "emailValidation": "Email is not valid",
+  "email": "Email",
+  "password": "Password",
+  "passwordValidation": "Password must be at least 6 characters",
+  "or": "Or"
 }

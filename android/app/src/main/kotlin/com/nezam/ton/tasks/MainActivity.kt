@@ -1,4 +1,4 @@
-package com.nezam.tasks.nezam
+package com.nezam.ton.tasks
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -12,7 +12,12 @@
           "package_name": "com.nezam.tasks.nezam"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "9438506017-5pca00hoeqld839iscr81b5g0nnjmitp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA7S0UeUizvFBZo-SDSoWf7FQXy416NmUs"
@@ -20,7 +25,55 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9438506017-5pca00hoeqld839iscr81b5g0nnjmitp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "9438506017-e6smevaaa4hugvtr0h87dluv5maa167r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nezam.tasks.nezam"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9438506017:android:da82b1f1bfbb5ef7698760",
+        "android_client_info": {
+          "package_name": "com.nezam.ton.tasks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "9438506017-5pca00hoeqld839iscr81b5g0nnjmitp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7S0UeUizvFBZo-SDSoWf7FQXy416NmUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9438506017-5pca00hoeqld839iscr81b5g0nnjmitp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "9438506017-e6smevaaa4hugvtr0h87dluv5maa167r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nezam.tasks.nezam"
+              }
+            }
+          ]
         }
       }
     }

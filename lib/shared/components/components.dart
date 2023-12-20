@@ -6,6 +6,7 @@ import '../../layout/adding_screens_layout/monthly.dart';
 import '../../layout/adding_screens_layout/repeat_type.dart';
 import '../../layout/adding_screens_layout/weekly.dart';
 import '../../layout/adding_screens_layout/yearly.dart';
+import '../../layout/view_screens/view_task.dart';
 import '../../mainScreen.dart';
 import '../constants.dart';
 
@@ -29,9 +30,12 @@ Widget textFld({
 
 }) => TextFormField(
   controller: controller,
+
   decoration: InputDecoration(
     hintText: hintText,
-    border: const OutlineInputBorder(),
+    border: const OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+    ),
     suffixIcon: IconButton(
       onPressed: (){
         suffixPressed!();
@@ -52,13 +56,13 @@ Widget textFld({
 );
 
 // Home Date Widget
-Widget timeDate(context) => Row(
+Widget timeDate(context,formatedHome) => Row(
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('2023', style: TextStyle(
+        Text(formatedHome, style: const TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
         )),
@@ -85,7 +89,13 @@ Widget buildTaskItem(id,model, BuildContext context) => Container(
       Expanded(
         child: GestureDetector(
           onTap: (){
-            AppCubit.get(context).getViewData(context, id);
+            selectedid = id;
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>
+              const ViewTask()
+              ),
+            );
           },
           child:
         Text(
@@ -143,7 +153,7 @@ Widget emptyTasks(context) => Center(
 );
 
 // Bottom bar on adding screens
-Widget bottomBar(BuildContext context, String refScreen,titleController,dateController,descController,formKey) => BottomAppBar(
+Widget bottomBar(context, String refScreen,titleController,dateController,descController,formKey) => BottomAppBar(
   shape: const CircularNotchedRectangle(),
   notchMargin: 10,
   color: screenBackgroundColor,
@@ -165,13 +175,8 @@ Widget bottomBar(BuildContext context, String refScreen,titleController,dateCont
                         date: dateController.text,
                         desc: descController.text
                     );
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) =>
-                      const MainScreen(),
-                      ),
-                    );
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MainScreen()), (Route<dynamic> route) => false);
                   }
-
                 }
                 if (AppCubit.get(context).repeat == 1) {
                       Navigator.push(

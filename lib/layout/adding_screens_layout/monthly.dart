@@ -103,7 +103,7 @@ class MonthlyTasks extends StatelessWidget {
                               color: color4,
                               child: TextButton.icon(
                                 onPressed: (){
-                                  if(AppCubit.get(context).cselectedRadio == 'value2'){
+                                  if(cselectedRadio == 'value2'){
                                     if(formKey.currentState!.validate()){
                                       AppCubit.get(context).monthlyAdding(context ,titleController.text, descController.text);
                                     }

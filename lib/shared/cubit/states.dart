@@ -26,3 +26,17 @@ class WeaklyState extends States {}
 class ViewState extends States {}
 
 class DeleteState extends States {}
+
+class SignInErrorState extends States {
+  final String error;
+  SignInErrorState(this.error);
+}
+
+class SignInSuccessState extends States {}
+
+class SignUpErrorState extends States {
+  final String error;
+  SignUpErrorState(this.error);
+}
+
+class SignUpSuccessState extends States {}

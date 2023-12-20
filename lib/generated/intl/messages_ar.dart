@@ -46,6 +46,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "arabic": MessageLookupByLibrary.simpleMessage("عربي"),
         "dateHint": MessageLookupByLibrary.simpleMessage("التاريخ"),
         "descriptionHint": MessageLookupByLibrary.simpleMessage("وصف المهمة"),
+        "dontHaveAccount":
+            MessageLookupByLibrary.simpleMessage("Don\'t Have Account"),
+        "email": MessageLookupByLibrary.simpleMessage("Email"),
+        "emailValidation":
+            MessageLookupByLibrary.simpleMessage("Email is not valid"),
         "empty": MessageLookupByLibrary.simpleMessage("القائمة فارغة"),
         "english": MessageLookupByLibrary.simpleMessage("انجليزي"),
         "monthlyRadioSub":
@@ -54,11 +59,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "newTask": MessageLookupByLibrary.simpleMessage("مهمة جديدة"),
         "next": MessageLookupByLibrary.simpleMessage("التالي"),
         "oneTime": MessageLookupByLibrary.simpleMessage("مره واحده"),
+        "or": MessageLookupByLibrary.simpleMessage("او"),
+        "password": MessageLookupByLibrary.simpleMessage("Password"),
+        "passwordValidation": MessageLookupByLibrary.simpleMessage(
+            "Password must be at least 6 characters"),
         "repeatTimes": MessageLookupByLibrary.simpleMessage("عدد المرات"),
         "repeatTypeSub": MessageLookupByLibrary.simpleMessage(
             "قم بتعيين التردد لمهمتك المتكررة."),
         "repeatTypeTitle":
             MessageLookupByLibrary.simpleMessage("حدد نوع التكرار"),
+        "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
+        "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
         "taskTitleHint": MessageLookupByLibrary.simpleMessage("عنوان المهمة"),
         "title": MessageLookupByLibrary.simpleMessage("Ton Tasks"),
         "today": MessageLookupByLibrary.simpleMessage("اليوم"),

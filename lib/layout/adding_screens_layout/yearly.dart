@@ -102,7 +102,7 @@ class YearlyTasks extends StatelessWidget {
                                   color: color4,
                                   child: TextButton.icon(
                                     onPressed: (){
-                                      if(AppCubit.get(context).cselectedRadio == 'value1'){
+                                      if(cselectedRadio == 'value1'){
                                         if(formKey.currentState!.validate()){
                                           AppCubit.get(context).yearlyAdding(context ,titleController.text, descController.text);
                                         }

@@ -50,6 +50,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "dateHint": MessageLookupByLibrary.simpleMessage("Date"),
         "descriptionHint":
             MessageLookupByLibrary.simpleMessage("Task Description"),
+        "dontHaveAccount":
+            MessageLookupByLibrary.simpleMessage("Don\'t Have Account"),
+        "email": MessageLookupByLibrary.simpleMessage("Email"),
+        "emailValidation":
+            MessageLookupByLibrary.simpleMessage("Email is not valid"),
         "empty": MessageLookupByLibrary.simpleMessage("Empty"),
         "english": MessageLookupByLibrary.simpleMessage("English"),
         "monthlyRadioSub":
@@ -58,11 +63,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "newTask": MessageLookupByLibrary.simpleMessage("New Task"),
         "next": MessageLookupByLibrary.simpleMessage("Next"),
         "oneTime": MessageLookupByLibrary.simpleMessage("One Time"),
+        "or": MessageLookupByLibrary.simpleMessage("Or"),
+        "password": MessageLookupByLibrary.simpleMessage("Password"),
+        "passwordValidation": MessageLookupByLibrary.simpleMessage(
+            "Password must be at least 6 characters"),
         "repeatTimes": MessageLookupByLibrary.simpleMessage("Repeat Times"),
         "repeatTypeSub": MessageLookupByLibrary.simpleMessage(
             "Set the frequency for your repeating task."),
         "repeatTypeTitle":
             MessageLookupByLibrary.simpleMessage("Repeatable Task Frequency"),
+        "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
+        "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
         "taskTitleHint": MessageLookupByLibrary.simpleMessage("Task Title"),
         "title": MessageLookupByLibrary.simpleMessage("Ton Tasks"),
         "today": MessageLookupByLibrary.simpleMessage("Today"),

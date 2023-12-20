@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nezam/layout/view_screens/edit_task.dart';
@@ -34,112 +35,132 @@ class ViewTask extends StatelessWidget {
                         Text('View Task',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: color3)),
                         SizedBox(
                           width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 30,),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Task Title',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 1,
-                                    color: Colors.grey,
-                                  ),
-                                  Text(selectedTitle),
-                                ],
-                              ),
-                              const SizedBox(height: 30,),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Task Description',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 1,
-                                    color: Colors.grey,
-                                  ),
-                                  const SizedBox(height: 5,),
-                                  SizedBox(
-                                    height: 100,
-                                      child: Text(selectedDesc == 'E' ? 'No Description' : selectedDesc)
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 40,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Column(
-                                    children: [
-                                      const Text('Year'),
-                                      const SizedBox(height: 5,),
-                                      Text(selectedYear),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 30,
-                                    color: Colors.grey,
-                                  ),
-                                  Column(
-                                    children: [
-                                      const Text('Month'),
-                                      const SizedBox(height: 5,),
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: firestoreService.geTaskData(),
+                            builder: (context, snapshot) {
+                              List tasks = snapshot.data!.docs;
+                              var task;
+                              if (snapshot.hasData) {
+                                for (int i = 0; i < tasks.length; i++){
+                                  DocumentSnapshot ds = tasks[i];
+                                  Map<String, dynamic> taska = ds.data() as Map<String, dynamic>;
+                                  if(ds.id == selectedid){
+                                    task = taska;
+                                    print(task);
 
-                                      Text(selectedMonth),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 30,
-                                    color: Colors.grey,
-                                  ),
-                                  Column(
-                                    children: [
-                                      const Text('Day'),
-                                      const SizedBox(height: 5,),
-                                      Text(selectedDay),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 40,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    if(task['desc'] == null){
+                                    task['desc'] = 'E';
+                                  }
+                                  }
+                                }
+                              }
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        color: Colors.green,
+                                  const SizedBox(height: 30,),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Task Title',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 1,
+                                        color: Colors.grey,
                                       ),
-                                      padding: const EdgeInsets.fromLTRB(15,5,15,5),
-                                      child: Text(selectedStatus,
-                                          style: const TextStyle(fontSize: 15,
-                                              fontWeight: FontWeight.bold
-                                          )
-                                      )
+                                      Text(task['title']),
+                                    ],
                                   ),
-                                  const SizedBox(width: 20,),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Colors.green,
-                                    ),
-                                    padding: const EdgeInsets.fromLTRB(15,5,15,5),
-                                      child: Text(selectedType,
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                  const SizedBox(height: 30,),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Task Description',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 1,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(height: 5,),
+                                      SizedBox(
+                                          height: 100,
+                                          child: Text(task['desc'] == 'E' ? 'No Description' : task['desc'])
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 40,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          const Text('Year'),
+                                          const SizedBox(height: 5,),
+                                          Text(task['year'].toString()),
+                                        ],
+                                      ),
+                                      Container(
+                                        width: 1,
+                                        height: 30,
+                                        color: Colors.grey,
+                                      ),
+                                      Column(
+                                        children: [
+                                          const Text('Month'),
+                                          const SizedBox(height: 5,),
+
+                                          Text(task['month'].toString()),
+                                        ],
+                                      ),
+                                      Container(
+                                        width: 1,
+                                        height: 30,
+                                        color: Colors.grey,
+                                      ),
+                                      Column(
+                                        children: [
+                                          const Text('Day'),
+                                          const SizedBox(height: 5,),
+                                          Text(task['day'].toString()),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 40,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                            color: Colors.green,
+                                          ),
+                                          padding: const EdgeInsets.fromLTRB(15,5,15,5),
+                                          child: Text(task['status'],
+                                              style: const TextStyle(fontSize: 15,
+                                                  fontWeight: FontWeight.bold
+                                              )
                                           )
-                                      )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                            color: Colors.green,
+                                          ),
+                                          padding: const EdgeInsets.fromLTRB(15,5,15,5),
+                                          child: Text(task['repeatType'],
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              )
+                                          )
+                                      ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                            ],
-                          ),
+                              );
+                            },)
                         ),
                       ],
                     ),
@@ -171,9 +192,9 @@ class ViewTask extends StatelessWidget {
                               padding: const EdgeInsets.fromLTRB(5,0,5,0),
                               child: TextButton(
                                   onPressed: (){
-                                    AppCubit.get(context).deleteTask(selectedId);
+                                    AppCubit.get(context).deleteTask(selectedid);
                                   },
-                                  child: Text('Delete Task',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold),)
+                                  child: Text('Delete',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold),)
                               )
                           ),
                         ],

@@ -1,18 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:nezam/shared/constants.dart';
 import 'package:nezam/shared/cubit/states.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../generated/l10n.dart';
-import '../../layout/view_screens/view_task.dart';
 import '../../main.dart';
 import '../firestrore.dart';
 
 
 final FirestoreService firestoreService = FirestoreService();
-
 class AppCubit extends Cubit<States> {
   AppCubit() : super(AppInitial());
   final DATABASE_NAME = 'todoo.db';
@@ -23,11 +22,18 @@ class AppCubit extends Cubit<States> {
   var repeat,element;
   var weaklyDays=[];
 
+  static int getDaysInMonth(int year, int month) {
+    if (month == DateTime.february) {
+      final bool isLeapYear = (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
+      return isLeapYear ? 29 : 28;
+    }
+    const List<int> daysInMonth = <int>[31, -1, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return daysInMonth[month - 1];
+  }
 
   Future insertToDB({required String title, required date, required String desc,})  async {
-
-    firestoreService.addNote(title: title, date: date, desc: desc);
-
+    print(date);
+    //firestoreService.addNote(title: title, date: date, desc: desc);
   }
 
   // Get all data from database
@@ -97,21 +103,12 @@ var list = 1;
   yearlyAdding(context ,String title, String desc) async {
     var eyear = nYear;
     //    title TEXT, year INTEGER, month INTEGER, day INTEGER, desc TEXT, status TEXT;
-      var db = await openDatabase(DATABASE_NAME,version: 1,);
       var count = [1,2,3,4,5,6,7,8,9,10,11,12];
-        for(var ee in count) {
-          await db.transaction((txn)  => txn.rawInsert(
-              'INSERT INTO tasks (title, year, month, day, desc, status ,tType) VALUES ("$title", "$eyear", 0, 0, "$desc", "new", "Yearly")'
-          ));
+      for(var ee in count) {
+          firestoreService.addTaskYearly(title: title, year: eyear, desc: desc, month: 0, day: 0);
           eyear = eyear +1;
         }
-    getDataFromDB(db);
-    Navigator.push(context,
-      MaterialPageRoute(builder: (context) =>
-      const MyApp(),
-      ),
-    );
-      // Delete a record
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false);
   }
 
   monthlyAdding(context ,String title, String desc) async {
@@ -121,50 +118,36 @@ var list = 1;
     var db = await openDatabase(DATABASE_NAME,version: 1,);
     var count = [1,2,3,4,5,6,7,8,9,10,11,12];
     for(var ee in count) {
-      await db.transaction((txn)  => txn.rawInsert(
-          'INSERT INTO tasks (title, year, month, day, desc, status ,tType) VALUES ("$title", "$savedYear", "$savedMonth", 0, "$desc", "new", "Monthly")'
-      )).then((value) => {
-          savedMonth = savedMonth +1,
-          if (nMonth > 12) {savedYear = savedYear + 1}
+      firestoreService.addTaskMonthly(title: title, year: savedYear, desc: desc, month: savedMonth, day: 0).then((value) =>
+      {
+        savedMonth = savedMonth +1,
+        if (nMonth > 12) {savedYear = savedYear + 1}
       });
+
     }
     getDataFromDB(db);
-    Navigator.push(context,
-      MaterialPageRoute(builder: (context) =>
-      const MyApp(),
-      ),
-    );
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false);
     // Delete a record
   }
-  static int getDaysInMonth(int year, int month) {
-    if (month == DateTime.february) {
-      final bool isLeapYear = (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
-      return isLeapYear ? 29 : 28;
-    }
-    const List<int> daysInMonth = <int>[31, -1, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    return daysInMonth[month - 1];
-  }
-  var cselectedRadio = '';
+
 
   weeklyAdding(context , title, times, description) async {
     var db = await openDatabase(DATABASE_NAME,version: 1,);
 
     if (times != ''){
-      var random = List<int>.generate(int.parse(times), (n) => n );
+      var random = List<int>.generate(int.parse(times) +1 , (n) => n );
       var savedMonth = nMonth, savedYear = nYear, savedDay = nDay;
       var numOfDays = getDaysInMonth(nYear, nMonth);
 
       for(var e in random){
         if(numOfDays >= savedDay + 7){
           savedDay = savedDay + 7 ;
-          await db.transaction((txn)  => txn.rawInsert(
-              'INSERT INTO tasks (title, year, month, day, desc, status ,tType) VALUES ("$title", "$savedYear", "$savedMonth", "$savedDay", "$desc", "new", "Weekly")'
-          )).then((value) => {
-             getDataFromDB(db),
-          Navigator.push(context,
-          MaterialPageRoute(builder: (context) =>
-          const MyApp()))
-          });
+          firestoreService.addTaskWeekly(title: title, year: savedYear, desc: desc, month: savedMonth, day: savedMonth).then((value) =>
+
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false)
+
+
+          );
         }else{
           savedDay = 7 - (numOfDays - savedDay) ;
           if (savedMonth == 12){
@@ -176,10 +159,6 @@ var list = 1;
         }
       }
     }
-
-
-
-
   }
   var numDay=[];
 
@@ -202,28 +181,8 @@ var list = 1;
 
 
   getViewData(context, id) async {
-    var db = await openDatabase(DATABASE_NAME,version: 1,);
-    await db.rawQuery('SELECT * FROM tasks WHERE id = ?', ['$id']).then((value) {
-      element = value;
-      print(element[0]['id']);
-      selectedId = element[0]['id'];
-      selectedTitle = element[0]['title'];
-      selectedDesc = element[0]['desc'];
-      selectedYear = element[0]['year'];
-      selectedMonth = element[0]['month'];
-      selectedDay = element[0]['day'];
-      selectedStatus = element[0]['status'];
-      selectedType = element[0]['tType'];
-      emit(ViewState());
-     print(selectedTitle);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) =>
-       const ViewTask()
-      ),
-    );
-  });
+
   }
 
   Future deleteTask(id) async {
@@ -246,6 +205,51 @@ var list = 1;
     print(day);
   }
 
+  userLogin({required email, required password, required context}) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      ).then((value) => {
+          print('User Info: ${FirebaseAuth.instance.currentUser}'),
+          print(value.user!.uid),
+      });
+    } on FirebaseAuthException catch  (e) {
+      emit(SignInErrorState(e.message.toString()));
+    }
+  }
+
+  userSignUp({required email, required password, required context}) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password
+      ).then((value) => {
+          print('User Info: ${FirebaseAuth.instance.currentUser}'),
+        print(value.user!.uid),
+      });
+    } on FirebaseAuthException catch  (e) {
+      emit(SignUpErrorState(e.message.toString()));
+    }
+  }
+
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
 }
 

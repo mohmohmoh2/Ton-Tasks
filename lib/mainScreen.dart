@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:nezam/shared/components/components.dart';
 import 'package:nezam/shared/constants.dart';
 import 'package:nezam/shared/cubit/cubit.dart';
@@ -19,8 +20,10 @@ class MainScreen extends StatelessWidget {
         listener: (BuildContext context, States state) {
         },
         builder: (BuildContext context, States state) {
-
-          var tasks = task;
+          // Home Page Date
+          var now = DateTime.now();
+          var homeFormatter = DateFormat('yyyy-MM-dd');
+          String formatedHome = homeFormatter.format(now);
           return Scaffold(
           appBar: AppBar(
             centerTitle: true,
@@ -49,7 +52,7 @@ class MainScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      timeDate(context),
+                      timeDate(context,formatedHome),
                       const SizedBox(height: 30,),
                       Expanded(
                         child: StreamBuilder<QuerySnapshot>(
@@ -72,11 +75,6 @@ class MainScreen extends StatelessWidget {
                             }
                           },
                         ),
-                        // child: ListView.separated(
-                        //   shrinkWrap: true,
-                        //   separatorBuilder: (context, index) => const SizedBox(height: 10,),
-                        //   itemCount: tasks.length,
-                        // ),
                       ),
                       Container(height: 90,color: mainColor)
                     ],

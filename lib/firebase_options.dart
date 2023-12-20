@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB3vVXkAod0NXs-7KrQ8ISdXr2tDEXKSJw',
-    appId: '1:9438506017:web:48cd56002aed1e6c698760',
-    messagingSenderId: '9438506017',
-    projectId: 'ton-tasks',
-    authDomain: 'ton-tasks.firebaseapp.com',
-    storageBucket: 'ton-tasks.appspot.com',
-    measurementId: 'G-YLJ31NEXXG',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA7S0UeUizvFBZo-SDSoWf7FQXy416NmUs',
-    appId: '1:9438506017:android:5337524d1177fa88698760',
+    appId: '1:9438506017:android:da82b1f1bfbb5ef7698760',
     messagingSenderId: '9438506017',
     projectId: 'ton-tasks',
     storageBucket: 'ton-tasks.appspot.com',
@@ -67,15 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '9438506017',
     projectId: 'ton-tasks',
     storageBucket: 'ton-tasks.appspot.com',
+    iosClientId: '9438506017-e6smevaaa4hugvtr0h87dluv5maa167r.apps.googleusercontent.com',
     iosBundleId: 'com.nezam.tasks.nezam',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAeBhrQ6GHXbeDcrbKM5TEppXT1soarrkE',
-    appId: '1:9438506017:ios:380385eece163bb3698760',
-    messagingSenderId: '9438506017',
-    projectId: 'ton-tasks',
-    storageBucket: 'ton-tasks.appspot.com',
-    iosBundleId: 'com.nezam.tasks.nezam.RunnerTests',
   );
 }
