@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nezam/layout/view_screens/edit_task.dart';
+import 'package:nezam/maindcreen.dart';
 
 import '../../generated/l10n.dart';
 import '../../shared/constants.dart';
@@ -17,149 +18,161 @@ class ViewTask extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => AppCubit(),
       child: BlocConsumer<AppCubit, States>(
-          listener: (BuildContext context, state) {  },
+          listener: (BuildContext context, state) {
+            if(state is DeleteTaskState){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MainScreen()), (Route<dynamic> route) => false);
+            }
+          },
           builder: (BuildContext context, state) {
             return Scaffold(
+              backgroundColor: mainColor,
                 appBar: AppBar(
                   centerTitle: true,
-                  title: Text(S.of(context).title, textAlign: TextAlign.center,),
-                  backgroundColor: color1,
+                  title: Text(S.of(context).title, textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.bold),),
+                  backgroundColor: mainColor,
                 ),
               body: Container(
-                padding: const EdgeInsets.fromLTRB(15,35,15,0),
+                padding: const EdgeInsets.fromLTRB(15,25,15,0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       children: [
-                        Text('View Task',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: color3)),
+                        Text('View Task',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: color3)),
                         SizedBox(
-                          width: double.infinity,
                           child: StreamBuilder<QuerySnapshot>(
                             stream: firestoreService.geTaskData(),
                             builder: (context, snapshot) {
                               List tasks = snapshot.data!.docs;
-                              var task;
                               if (snapshot.hasData) {
-                                for (int i = 0; i < tasks.length; i++){
+                                for(var i = 0; i < tasks.length; i++){
                                   DocumentSnapshot ds = tasks[i];
-                                  Map<String, dynamic> taska = ds.data() as Map<String, dynamic>;
-                                  if(ds.id == selectedid){
-                                    task = taska;
-                                    print(task);
-
-                                    if(task['desc'] == null){
-                                    task['desc'] = 'E';
-                                  }
-                                  }
+                                  String id = ds.id;
+                                  Map<String, dynamic> task = ds.data() as Map<String, dynamic>;
+                                  id == selectedid ?  sTask = task : null;
                                 }
-                              }
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 30,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('Task Title',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
-                                      Container(
-                                        width: double.infinity,
-                                        height: 1,
-                                        color: Colors.grey,
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 30,),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.fromLTRB(15,20,15,20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        color: color1,
                                       ),
-                                      Text(task['title']),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 30,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('Task Description',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
-                                      Container(
-                                        width: double.infinity,
-                                        height: 1,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(height: 5,),
-                                      SizedBox(
-                                          height: 100,
-                                          child: Text(task['desc'] == 'E' ? 'No Description' : task['desc'])
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 40,),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Column(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          const Text('Year'),
-                                          const SizedBox(height: 5,),
-                                          Text(task['year'].toString()),
+                                          Text('Task Title',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: color4)),
+                                          Text(sTask['title']),
                                         ],
                                       ),
-                                      Container(
-                                        width: 1,
-                                        height: 30,
-                                        color: Colors.grey,
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.fromLTRB(15,20,15,20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        color: color1,
                                       ),
-                                      Column(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          const Text('Month'),
+                                          Text('Task Description',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: color4)),
                                           const SizedBox(height: 5,),
+                                          SizedBox(
+                                              height: 100,
+                                              child: Text(sTask['description'] == 'E' ? 'No Description' : sTask['description'])
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            const Text('Year'),
+                                            const SizedBox(height: 5,),
+                                            Text(sTask['year'].toString()),
+                                          ],
+                                        ),
+                                        Container(
+                                          width: 1,
+                                          height: 30,
+                                          color: Colors.grey,
+                                        ),
+                                        Column(
+                                          children: [
+                                            const Text('Month'),
+                                            const SizedBox(height: 5,),
 
-                                          Text(task['month'].toString()),
-                                        ],
-                                      ),
-                                      Container(
-                                        width: 1,
-                                        height: 30,
-                                        color: Colors.grey,
-                                      ),
-                                      Column(
-                                        children: [
-                                          const Text('Day'),
-                                          const SizedBox(height: 5,),
-                                          Text(task['day'].toString()),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 40,),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: Colors.green,
-                                          ),
+                                            Text(sTask['month'].toString()),
+                                          ],
+                                        ),
+                                        Container(
+                                          width: 1,
+                                          height: 30,
+                                          color: Colors.grey,
+                                        ),
+                                        Column(
+                                          children: [
+                                            const Text('Day'),
+                                            const SizedBox(height: 5,),
+                                            Text(sTask['day'].toString()),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 40,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.timer_sharp,color: color3,),
+                                            const SizedBox(width: 8,),
+                                            Text('Repeat Type :',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: color3)),
+                                          ],
+                                        ),
+                                        Container(
                                           padding: const EdgeInsets.fromLTRB(15,5,15,5),
-                                          child: Text(task['status'],
-                                              style: const TextStyle(fontSize: 15,
-                                                  fontWeight: FontWeight.bold
-                                              )
-                                          )
-                                      ),
-                                      const SizedBox(width: 20,),
-                                      Container(
-                                          decoration: BoxDecoration(
+                                        decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(10.0),
-                                            color: Colors.green,
+                                            color: color3,
                                           ),
-                                          padding: const EdgeInsets.fromLTRB(15,5,15,5),
-                                          child: Text(task['repeatType'],
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              )
-                                          )
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
+                                            child: Text(sTask['repeatType'],style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.flag_outlined,color: color3,),
+                                            const SizedBox(width: 8,),
+                                            Text('Task Status :',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: color3)),
+                                          ],
+                                        ),
+                                        Container(
+                                            padding: const EdgeInsets.fromLTRB(15,5,15,5),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                              color: color3,
+                                            ),
+                                            child: Text(sTask['status'],style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),)),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              }else {
+                                return const SizedBox();
+                              }
                             },)
                         ),
                       ],
@@ -192,7 +205,47 @@ class ViewTask extends StatelessWidget {
                               padding: const EdgeInsets.fromLTRB(5,0,5,0),
                               child: TextButton(
                                   onPressed: (){
-                                    AppCubit.get(context).deleteTask(selectedid);
+                                    showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                        title: const Text('Delete Task'),
+                                        content: Container(
+                                          padding: const EdgeInsets.fromLTRB(5,30,5,0),
+                                            child: Text('Are You Sure You Want To Delete This Task?',style: TextStyle(fontSize: 17,color: color3))),
+                                        actions: <Widget>[
+                                          Container(
+                                            padding: const EdgeInsets.fromLTRB(5,40,5,0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.fromLTRB(5,0,5,0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    color: color3,
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () => Navigator.pop(context),
+                                                    child: Text('No',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold)),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.fromLTRB(5,0,5,0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    color: Colors.red,
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () => AppCubit.get(context).deleteTask(selectedid),
+                                                    child: Text('Yes',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold))
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    );
                                   },
                                   child: Text('Delete',style: TextStyle(color: mainColor,fontWeight: FontWeight.bold),)
                               )

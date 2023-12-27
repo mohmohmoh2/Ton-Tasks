@@ -17,7 +17,6 @@ class RepeatType extends StatelessWidget {
           listener: (BuildContext context, States state) {
           },
           builder: (BuildContext context, States state) {
-
             var selected = 4.0;
             var notselected = 1.0;
             var width1 = notselected, width2 = notselected, width3 = notselected;

@@ -1,26 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nezam/shared/constants.dart';
 import 'package:nezam/shared/cubit/states.dart';
-import 'package:sqflite/sqflite.dart';
-import '../../generated/l10n.dart';
 import '../../main.dart';
-import '../firestrore.dart';
+import 'dart:io';
 
-
-final FirestoreService firestoreService = FirestoreService();
 class AppCubit extends Cubit<States> {
   AppCubit() : super(AppInitial());
-  final DATABASE_NAME = 'todoo.db';
-  var selectedRadio,title,desc,date;
   static AppCubit get(context) => BlocProvider.of(context);
-  String stringLang = 'ar';
-  List<Map> tasks = [];
-  var repeat,element;
+  final DATABASE_NAME = 'todoo.db';
+  var selectedRadio,desc;
+  var repeat;
   var weaklyDays=[];
+
 
   static int getDaysInMonth(int year, int month) {
     if (month == DateTime.february) {
@@ -31,18 +29,10 @@ class AppCubit extends Cubit<States> {
     return daysInMonth[month - 1];
   }
 
-  Future insertToDB({required String title, required date, required String desc,})  async {
-    print(date);
-    //firestoreService.addNote(title: title, date: date, desc: desc);
-  }
-
-  // Get all data from database
-  void getDataFromDB(dbb) {
-    emit(GetDataFromDBState());
-    dbb.rawQuery('SELECT * FROM tasks').then((value) {
-      tasks = value;
-      task = value;
-      emit(GetDataFromDBState());
+  Future insertToDB({required context,required String title, required date, required String desc,})  async {
+    firestoreService.addNote(title: title, date: date, desc: desc).then((value) => {
+      firestoreService.updateTasksNumber(context),
+      getUser(),
     });
   }
 
@@ -54,15 +44,14 @@ class AppCubit extends Cubit<States> {
 
   // Change Active Language Variable
   changeLang(String value) async {
-
     if(Intl.getCurrentLocale() == value){
       emit(ChangeBTMState());
     }else if(Intl.getCurrentLocale() != value){
       if (Intl.getCurrentLocale() == 'en'){
-      S.load(const Locale('ar', ''));
+      //S.load(const Locale('ar', ''));
       emit(ChangeBTMState());
     }else if(Intl.getCurrentLocale() == 'ar'){
-      S.load(const Locale('en', ''));
+      //S.load(const Locale('en', ''));
       emit(ChangeBTMState());
     }
     }
@@ -78,34 +67,34 @@ class AppCubit extends Cubit<States> {
     emit(RadiobuttonTaskState());
   }
 
-  test(){
-      var done = false;
-  var now = DateTime.now();
-  var formatter = DateFormat('EEEE');
-  String formattedDate = formatter.format(now);
-var list = 1;
-
-// ['Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
-  for (var element in daysEn ) {
-    if(element != formattedDate && done == false){
-        list = list + 1;
-    }else if(element == formattedDate){
-      done = true;
-    }
-  }
-  //var first = daysEn.getRange(0, list);
-
-  //var f = daysEn.addAll(first);
-  daysEn.removeRange(0, list);
-
-}
+//   test(){
+//       var done = false;
+//   var now = DateTime.now();
+//   var formatter = DateFormat('EEEE');
+//   String formattedDate = formatter.format(now);
+// var list = 1;
+//
+// // ['Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
+//   for (var element in daysEn ) {
+//     if(element != formattedDate && done == false){
+//         list = list + 1;
+//     }else if(element == formattedDate){
+//       done = true;
+//     }
+//   }
+//   //var first = daysEn.getRange(0, list);
+//
+//   //var f = daysEn.addAll(first);
+//   daysEn.removeRange(0, list);
+//
+// }
 
   yearlyAdding(context ,String title, String desc) async {
     var eyear = nYear;
     //    title TEXT, year INTEGER, month INTEGER, day INTEGER, desc TEXT, status TEXT;
-      var count = [1,2,3,4,5,6,7,8,9,10,11,12];
-      for(var ee in count) {
+      for(var i=0; i < 12; i++) {
           firestoreService.addTaskYearly(title: title, year: eyear, desc: desc, month: 0, day: 0);
+          firestoreService.updateTasksNumber(context);
           eyear = eyear +1;
         }
     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false);
@@ -115,39 +104,30 @@ var list = 1;
 
     var savedMonth = nMonth,savedYear = nYear;
     //    title TEXT, year INTEGER, month INTEGER, day INTEGER, desc TEXT, status TEXT;
-    var db = await openDatabase(DATABASE_NAME,version: 1,);
-    var count = [1,2,3,4,5,6,7,8,9,10,11,12];
-    for(var ee in count) {
+    for(var i=0; i < 12; i++) {
       firestoreService.addTaskMonthly(title: title, year: savedYear, desc: desc, month: savedMonth, day: 0).then((value) =>
       {
+        firestoreService.updateTasksNumber(context),
         savedMonth = savedMonth +1,
         if (nMonth > 12) {savedYear = savedYear + 1}
       });
-
     }
-    getDataFromDB(db);
     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false);
     // Delete a record
   }
 
-
   weeklyAdding(context , title, times, description) async {
-    var db = await openDatabase(DATABASE_NAME,version: 1,);
-
     if (times != ''){
-      var random = List<int>.generate(int.parse(times) +1 , (n) => n );
       var savedMonth = nMonth, savedYear = nYear, savedDay = nDay;
       var numOfDays = getDaysInMonth(nYear, nMonth);
-
-      for(var e in random){
+      for(var i=0; i < times; i++){
         if(numOfDays >= savedDay + 7){
           savedDay = savedDay + 7 ;
           firestoreService.addTaskWeekly(title: title, year: savedYear, desc: desc, month: savedMonth, day: savedMonth).then((value) =>
-
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false)
-
-
-          );
+          {
+            firestoreService.updateTasksNumber(context),
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false),
+          });
         }else{
           savedDay = 7 - (numOfDays - savedDay) ;
           if (savedMonth == 12){
@@ -160,49 +140,19 @@ var list = 1;
       }
     }
   }
-  var numDay=[];
-
-  weekly(index){
-    // [Friday, Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday]
-    var numDays = ['8', '9', '10', '11', '12', '13', '14'];
-    var day = daysEn[index];
-
-    if(weaklyDays.contains(day)){
-      weaklyDays.remove(day);
-      numDay.remove(numDays[index]);
-
-    }else{
-      weaklyDays.add(day);
-      numDay.add(numDays[index]);
-    }
-
-    emit(WeaklyState());
-  }
-
-
-  getViewData(context, id) async {
-
-
-  }
 
   Future deleteTask(id) async {
-    var db = openDatabase(DATABASE_NAME,version: 1,);
-    print(id);
-    db.then((value) => {
-      value.rawDelete('DELETE FROM tasks WHERE id = ?', [id]).then((value) => {
-        getDataFromDB(value),
-        emit(DeleteState()),
-      })
+    firestoreService.deleteNote(selectedid).then((value) => {
+      emit(DeleteTaskState()),
     });
-
   }
 
   editTask(title,description,year,month,day){
-    print(title);
-    print(description);
-    print(year);
-    print(month);
-    print(day);
+    firestoreService.updateTask(id: selectedid, title: title, desc: description, year: year, month: month, day: day).then((value) => {
+      selectedid= '',
+      sTask = {},
+      emit(UpdateTaskState()),
+    });
   }
 
   userLogin({required email, required password, required context}) async {
@@ -211,8 +161,7 @@ var list = 1;
           email: email,
           password: password
       ).then((value) => {
-          print('User Info: ${FirebaseAuth.instance.currentUser}'),
-          print(value.user!.uid),
+          emit(SignInSuccessState()),
       });
     } on FirebaseAuthException catch  (e) {
       emit(SignInErrorState(e.message.toString()));
@@ -225,31 +174,89 @@ var list = 1;
           email: email,
           password: password
       ).then((value) => {
-          print('User Info: ${FirebaseAuth.instance.currentUser}'),
-        print(value.user!.uid),
+        firestoreService.addUser(id: auth.currentUser?.uid, email: email).then((value) => {
+          emit(SignUpSuccessState()),
+        }),
       });
     } on FirebaseAuthException catch  (e) {
       emit(SignUpErrorState(e.message.toString()));
     }
   }
 
-
   Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
     // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-
+    firestoreService.addUser(id: auth.currentUser?.uid, email: auth.currentUser?.email).then((value) => {
+      emit(SignInSuccessState()),
+    });
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-}
+  logout(context) async {
+    await FirebaseAuth.instance.signOut().then((value) => {
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MyApp()), (Route<dynamic> route) => false)
+    });
+  }
+  final img = ImagePicker();
 
+
+  imagePicCamera() async{
+    try {
+      final image = await img.pickImage(source: ImageSource.camera);
+
+      if(image == null) return;
+      File imgfile = File(image.path);
+      emit(ImagePickedState());
+      uploadedImage(imgfile);
+    } on PlatformException catch(e) {
+      print('Failed to pick image: ${e.message}');
+    }
+  }
+
+  imagePic() async{
+    try {
+      final image = await img.pickImage(source: ImageSource.gallery);
+      if(image == null) return;
+      File imgfile = File(image.path);
+      emit(ImagePickedState());
+      uploadedImage(imgfile);
+    } on PlatformException catch(e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  uploadedImage(File imgfile) async{
+     firebase_storage.FirebaseStorage.instance
+         .ref()
+         .child('users/${auth.currentUser?.uid}profile.png')
+         .putFile(imgfile).then((val) => {
+       val.ref.getDownloadURL()
+           .then((value) => {
+         firestoreService.updateimg(newimg: value, id: auth.currentUser?.uid).then((value) => {
+           emit(UploadImageState()),
+         }),
+       }),
+     });
+  }
+
+  getUser(){
+    firestoreService.getUserData().then((value) => {
+      userData = value.data() as Map<String, dynamic>,
+      emit(GetUserState()),
+    });
+  }
+
+  updateUserName (name){
+    firestoreService.updateName(newName: name, id: auth.currentUser?.uid).then((value) => {
+      emit(UpdateNameState()),
+    });
+  }
+}

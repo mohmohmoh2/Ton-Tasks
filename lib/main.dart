@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:nezam/maindcreen.dart';
+import 'package:nezam/shared/constants.dart';
 import 'firebase_options.dart';
 import 'generated/l10n.dart';
-import 'layout/registration/sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,10 +27,13 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: ' TON Tasks ',
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          background: mainColor,
+        ),
         primarySwatch: Colors.blue,
         fontFamily: myLocale == "en" ? GoogleFonts.poppins().fontFamily : GoogleFonts.cairo().fontFamily,
       ),
-      home: SignIn(),
+      home: const MainScreen(),
         locale: const Locale('en', ''),
         localizationsDelegates: const [
           S.delegate,

@@ -370,6 +370,16 @@ class S {
     );
   }
 
+  /// `Confirm`
+  String get con {
+    return Intl.message(
+      'Confirm',
+      name: 'con',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Repeat Times`
   String get repeatTimes {
     return Intl.message(
@@ -395,6 +405,16 @@ class S {
     return Intl.message(
       'Don\'t Have Account',
       name: 'dontHaveAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Have Account`
+  String get haveAccount {
+    return Intl.message(
+      'Have Account',
+      name: 'haveAccount',
       desc: '',
       args: [],
     );

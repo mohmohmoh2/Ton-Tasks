@@ -112,24 +112,8 @@ class WeeklyTasks extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: Container(
-                                color: color4,
-                                child: TextButton.icon(
-                                  onPressed: (){
-                                      if(formKey.currentState!.validate()){
-                                        AppCubit.get(context).weeklyAdding(context,titleController.text,timesController.text,descController.text);
-                                      }
-                                  },
-                                  label: Text(S.of(context).next
-                                    , style: TextStyle(
-                                        color: mainColor
-                                    ),),
-                                  icon: Icon(Icons.chevron_left_outlined, color: mainColor,),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 20,),
+
+
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12.0),
@@ -139,7 +123,29 @@ class WeeklyTasks extends StatelessWidget {
                                 onPressed: (){
                                   Navigator.pop(context);
                                 },
-                                icon: Icon(Icons.chevron_right_outlined, color: color4,),
+                                icon: Icon(Icons.chevron_left_outlined, color: color4,),
+                              ),
+                            ),
+                            const SizedBox(width: 20,),
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  border: Border.all(color: mainColor, width: 2.0),
+                                  color: Colors.green,
+                                ),
+                                child: TextButton.icon(
+                                  onPressed: (){
+                                    if(formKey.currentState!.validate()){
+                                      AppCubit.get(context).weeklyAdding(context,titleController.text,timesController.text,descController.text);
+                                    }
+                                  },
+                                  icon: Icon(Icons.check_circle, color: mainColor,),
+                                  label: Text(S.of(context).con
+                                    , style: TextStyle(
+                                        color: mainColor
+                                    ),),
+                                ),
                               ),
                             ),
                           ],

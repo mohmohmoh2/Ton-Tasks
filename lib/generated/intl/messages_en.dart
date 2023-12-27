@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Schedule your yearly tasks"),
         "YearlyRadioTitle": MessageLookupByLibrary.simpleMessage("Yearly"),
         "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+        "con": MessageLookupByLibrary.simpleMessage("Confirm"),
         "dateHint": MessageLookupByLibrary.simpleMessage("Date"),
         "descriptionHint":
             MessageLookupByLibrary.simpleMessage("Task Description"),
@@ -57,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Email is not valid"),
         "empty": MessageLookupByLibrary.simpleMessage("Empty"),
         "english": MessageLookupByLibrary.simpleMessage("English"),
+        "haveAccount": MessageLookupByLibrary.simpleMessage("Have Account"),
         "monthlyRadioSub":
             MessageLookupByLibrary.simpleMessage("Schedule your monthly tasks"),
         "monthlyRadioTitle": MessageLookupByLibrary.simpleMessage("Monthly"),

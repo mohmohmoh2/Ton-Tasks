@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../generated/l10n.dart';
+import '../../maindcreen.dart';
 import '../../shared/constants.dart';
 import '../../shared/cubit/cubit.dart';
 import '../../shared/cubit/states.dart';
@@ -19,15 +20,17 @@ class EditTask extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => AppCubit(),
       child: BlocConsumer<AppCubit, States>(
-          listener: (BuildContext context, state) {  },
+          listener: (BuildContext context, state) {
+            if(state is UpdateTaskState){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MainScreen()), (Route<dynamic> route) => false);
+            }
+          },
           builder: (BuildContext context, state) {
-
-            titleController.text = selectedTitle;
-            descController.text = selectedDesc == 'E' ? ' ' : selectedDesc;
-            yearController.text = selectedYear;
-            monthController.text = selectedMonth;
-            dayController.text = selectedDay;
-
+            titleController.text = sTask['title'];
+            descController.text = sTask['description'] == 'E' ? ' ' : sTask['description'];
+            yearController.text = sTask['year'];
+            monthController.text = sTask['month'];
+            dayController.text = sTask['day'];
             return Scaffold(
                 appBar: AppBar(
                   centerTitle: true,
@@ -73,8 +76,9 @@ class EditTask extends StatelessWidget {
                                       const Text('Task Description',style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold)),
                                       const SizedBox(height: 5,),
                                       SizedBox(
-                                          height: 100,
                                           child: TextFormField(
+                                            minLines: 5,
+                                            maxLines: 5,
                                             controller: descController,
                                             decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
@@ -83,7 +87,7 @@ class EditTask extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 40,),
+                                  const SizedBox(height: 30,),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
@@ -93,7 +97,7 @@ class EditTask extends StatelessWidget {
                                           const SizedBox(height: 5,),
                                           SizedBox(
                                             width: 70,
-                                            height: 50,
+                                            height: 60,
                                             child: TextFormField(
                                               controller: yearController,
                                               keyboardType: TextInputType.number,
@@ -153,7 +157,7 @@ class EditTask extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 40,),
+                                  const SizedBox(height: 30,),
                                 ],
                               ),
                             ),

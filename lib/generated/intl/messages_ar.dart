@@ -44,6 +44,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("جدولة مهامك السنوية"),
         "YearlyRadioTitle": MessageLookupByLibrary.simpleMessage("سنويا"),
         "arabic": MessageLookupByLibrary.simpleMessage("عربي"),
+        "con": MessageLookupByLibrary.simpleMessage("تأكيد"),
         "dateHint": MessageLookupByLibrary.simpleMessage("التاريخ"),
         "descriptionHint": MessageLookupByLibrary.simpleMessage("وصف المهمة"),
         "dontHaveAccount":
@@ -53,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Email is not valid"),
         "empty": MessageLookupByLibrary.simpleMessage("القائمة فارغة"),
         "english": MessageLookupByLibrary.simpleMessage("انجليزي"),
+        "haveAccount": MessageLookupByLibrary.simpleMessage("Have Account"),
         "monthlyRadioSub":
             MessageLookupByLibrary.simpleMessage("جدولة مهامك الشهرية"),
         "monthlyRadioTitle": MessageLookupByLibrary.simpleMessage("شهريا"),

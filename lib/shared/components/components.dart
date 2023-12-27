@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:nezam/modules/add_screen/addScreen.dart';
+import 'package:nezam/modules/add_screen/addscreen.dart';
 import 'package:nezam/shared/cubit/cubit.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../generated/l10n.dart';
 import '../../layout/adding_screens_layout/monthly.dart';
 import '../../layout/adding_screens_layout/repeat_type.dart';
 import '../../layout/adding_screens_layout/weekly.dart';
 import '../../layout/adding_screens_layout/yearly.dart';
 import '../../layout/view_screens/view_task.dart';
-import '../../mainScreen.dart';
+import '../../maindcreen.dart';
 import '../constants.dart';
-
-
 
 // Reusable Text Form Field
 Widget textFld({
@@ -29,9 +28,10 @@ Widget textFld({
   Function? validate,
 
 }) => TextFormField(
+  cursorColor: color3,
   controller: controller,
-
   decoration: InputDecoration(
+    hintStyle: TextStyle(color: color3),
     hintText: hintText,
     border: const OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -63,7 +63,7 @@ Widget timeDate(context,formatedHome) => Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(formatedHome, style: const TextStyle(
-          fontSize: 32,
+          fontSize: 25,
           fontWeight: FontWeight.bold,
         )),
         const SizedBox(height: 5),
@@ -76,6 +76,9 @@ Widget timeDate(context,formatedHome) => Row(
 
 // Reusable Task Item
 Widget buildTaskItem(id,model, BuildContext context) => Container(
+  margin: const EdgeInsets.only(
+    bottom: 10.0,
+  ),
   decoration: BoxDecoration(
     borderRadius: BorderRadius.circular(12.0),
     color: model['status'] == 'new' ? color1 : color2,
@@ -85,7 +88,6 @@ Widget buildTaskItem(id,model, BuildContext context) => Container(
   ),
   child: Row(
     children: [
-
       Expanded(
         child: GestureDetector(
           onTap: (){
@@ -102,42 +104,21 @@ Widget buildTaskItem(id,model, BuildContext context) => Container(
             '${model['title']}', style: TextStyle(color: model['status'] == 'new' ? color2 : mainColor)),
         ),
       ),
-        model['status'] == 'new' ? IconButton(
-            onPressed: (){
-
-              AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: id);
-            },
-            icon: Icon( Icons.circle_outlined, color: color2)) :
+        model['status'] == 'new' ? TextButton(
+          onPressed: () {
+            AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: id);
+          },
+          child: CircularPercentIndicator(
+            radius: 22.0,
+            lineWidth: 5.0,
+            percent: 0.75,
+            center: const Text("3/4",style: TextStyle(fontSize: 12),),
+            progressColor: color4,
+          ),
+        ) :
         IconButton(onPressed: (){
           AppCubit.get(context).onChangeButtonPressed(status: model['status'], id: id);
-        }, icon:
-        Icon( Icons.check_circle, color: mainColor)
-        ),
-    ],
-  ),
-);
-
-Widget buildDayItem(list, index, BuildContext context) => Container(
-
-  decoration: BoxDecoration(
-    color: color1,
-    borderRadius: BorderRadius.circular(12.0),
-  ),
-  padding: const EdgeInsets.symmetric(
-    horizontal: 15.0,
-  ),
-  child: Row(
-    children: [
-      Expanded(child:
-      Text(
-          '${list[index]}', style: TextStyle(color: color2 )),
-      ),
-      IconButton(
-          onPressed: (){
-            AppCubit.get(context).weekly(index);
-          },
-          icon: Icon( AppCubit.get(context).weaklyDays.contains(daysEn[index]) ? Icons.check_circle : Icons.circle_outlined , color: color2)
-      ),
+        }, icon: Icon( Icons.check_circle, color: mainColor)),
     ],
   ),
 );
@@ -164,7 +145,11 @@ Widget bottomBar(context, String refScreen,titleController,dateController,descCo
       children: [
         Expanded(
           child: Container(
-            color: color4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(color: mainColor, width: 2.0),
+              color: color4,
+            ),
             child: TextButton.icon(
               onPressed: (){
                 if (refScreen == 'oneTimeTask'){
@@ -173,7 +158,8 @@ Widget bottomBar(context, String refScreen,titleController,dateController,descCo
                     AppCubit.get(context).insertToDB(
                         title: titleController.text,
                         date: dateController.text,
-                        desc: descController.text
+                        desc: descController.text,
+                        context: context
                     );
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MainScreen()), (Route<dynamic> route) => false);
                   }

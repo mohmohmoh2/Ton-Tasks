@@ -40,3 +40,15 @@ class SignUpErrorState extends States {
 }
 
 class SignUpSuccessState extends States {}
+
+class DeleteTaskState extends States {}
+
+class UpdateTaskState extends States {}
+
+class UpdateNameState extends States {}
+
+class ImagePickedState extends States {}
+
+class UploadImageState extends States {}
+
+class GetUserState extends States {}

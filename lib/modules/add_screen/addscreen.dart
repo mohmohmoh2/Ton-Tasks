@@ -4,19 +4,20 @@ import 'package:intl/intl.dart';
 import 'package:nezam/shared/components/components.dart';
 import 'package:nezam/shared/cubit/states.dart';
 import '../../generated/l10n.dart';
+import '../../maindcreen.dart';
 import '../../shared/constants.dart';
 import '../../shared/cubit/cubit.dart';
 
-var formKey = GlobalKey<FormState>();
 
 class AddScreen extends StatelessWidget {
+  final formKey = GlobalKey<FormState>();
 
   // Form Controllers
   final titleController = TextEditingController();
   final descController = TextEditingController();
   final dateController = TextEditingController();
 
-  AddScreen({super.key});
+   AddScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,14 @@ class AddScreen extends StatelessWidget {
       child: BlocConsumer<AppCubit, States>(
         listener: (BuildContext context, States state) {
           if(state is InsertDBState){
-            Navigator.pop(context);}
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Task Added Successfully'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
         },
         builder: (BuildContext context, States state) {
           return Scaffold(
@@ -69,9 +77,13 @@ class AddScreen extends StatelessWidget {
                                   type: TextInputType.none,
                                   onTap: (){
                                         showDatePicker(
+                                          helpText: 'Select Task Date',
                                           context: context,
                                           initialDate: DateTime.now(),
                                           firstDate: DateTime.now(),
+                                          currentDate: DateTime.now(),
+                                          locale: const Locale('en', ''),
+                                          // switchToCalendarEntryModeIcon: const Icon(Icons.calendar_today_outlined),
                                           lastDate: DateTime.parse('2044-12-31'),
                                         ).then((value) {
                                           value.toString();
@@ -102,8 +114,57 @@ class AddScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        bottomBar(context,'oneTimeTask',titleController,dateController,descController,formKey),
-
+                        BottomAppBar(
+                          shape: const CircularNotchedRectangle(),
+                          notchMargin: 10,
+                          color: screenBackgroundColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  border: Border.all(color: color4, width: 2.0),
+                                ),
+                                child: IconButton(
+                                  onPressed: (){
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(Icons.chevron_left_outlined, color: color4,),
+                                ),
+                              ),
+                              const SizedBox(width: 20,),
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    border: Border.all(color: mainColor, width: 2.0),
+                                    color: Colors.green,
+                                  ),
+                                  child: TextButton.icon(
+                                    onPressed: (){
+                                      if(formKey.currentState!.validate()){
+                                        if(descController.text.isEmpty){descController.text = 'E';}
+                                        AppCubit.get(context).insertToDB(
+                                            title: titleController.text,
+                                            date: dateController.text,
+                                            desc: descController.text,
+                                            context: context
+                                        );
+                                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)  => const MainScreen()), (Route<dynamic> route) => false);
+                                      }
+                                    },
+                                    label: Text(S.of(context).con
+                                      , style: TextStyle(
+                                          color: mainColor
+                                      ),),
+                                    icon: Icon(Icons.check_circle, color: mainColor,),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

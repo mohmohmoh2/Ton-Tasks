@@ -6,7 +6,6 @@ import '../../shared/cubit/cubit.dart';
 import '../../shared/cubit/states.dart';
 import '../../generated/l10n.dart';
 
-
 class MonthlyTasks extends StatelessWidget {
   const MonthlyTasks ({super.key});
   @override
@@ -20,7 +19,6 @@ class MonthlyTasks extends StatelessWidget {
           // Form Controllers
           final titleController = TextEditingController();
           final descController = TextEditingController();
-
           return Scaffold(
             body: SafeArea(
               child: Container(
@@ -98,26 +96,6 @@ class MonthlyTasks extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: Container(
-                              color: color4,
-                              child: TextButton.icon(
-                                onPressed: (){
-                                  if(cselectedRadio == 'value2'){
-                                    if(formKey.currentState!.validate()){
-                                      AppCubit.get(context).monthlyAdding(context ,titleController.text, descController.text);
-                                    }
-                                  }
-                                },
-                                label: Text(S.of(context).next
-                                  , style: TextStyle(
-                                      color: mainColor
-                                  ),),
-                                icon: Icon(Icons.chevron_left_outlined, color: mainColor,),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 20,),
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.0),
@@ -127,7 +105,31 @@ class MonthlyTasks extends StatelessWidget {
                               onPressed: (){
                                 Navigator.pop(context);
                               },
-                              icon: Icon(Icons.chevron_right_outlined, color: color4,),
+                              icon: Icon(Icons.chevron_left_outlined, color: color4,),
+                            ),
+                          ),
+                          const SizedBox(width: 20,),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.0),
+                                border: Border.all(color: mainColor, width: 2.0),
+                                color: Colors.green,
+                              ),
+                              child: TextButton.icon(
+                                onPressed: (){
+                                  if(cselectedRadio == 'value2'){
+                                    if(formKey.currentState!.validate()){
+                                      AppCubit.get(context).monthlyAdding(context ,titleController.text, descController.text);
+                                    }
+                                  }
+                                },
+                                icon: Icon(Icons.check_circle, color: mainColor,),
+                                label: Text(S.of(context).con
+                                  , style: TextStyle(
+                                      color: mainColor
+                                  ),),
+                              ),
                             ),
                           ),
                         ],
@@ -139,7 +141,6 @@ class MonthlyTasks extends StatelessWidget {
             )
           );
         },
-
       ),
     );
   }
